@@ -12,18 +12,15 @@
   --bg: #0a0a0a; --surface: #161616; --border: #2a2a2a;
   --text: #f0f0f0; --muted: #666; --accent: #e8ff47;
   --mono: 'Space Mono', monospace;
-  --nav-h: 56px; --top-h: 52px;
 }
 html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--mono); }
 body { display: flex; flex-direction: column; }
 
-/* ── DESKTOP header ─────────────────────────────────────── */
 header { padding: 0.85rem 1.6rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0; }
 .logo  { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.15em; }
 .title { font-size: 1rem; font-weight: 700; }
 .badge { font-size: 0.62rem; padding: 3px 7px; background: var(--accent); color: #000; border-radius: 2px; font-weight: 700; }
 
-/* ── DESKTOP layout ─────────────────────────────────────── */
 .layout { display: grid; grid-template-columns: 270px 1fr; flex: 1; min-height: 0; overflow: hidden; }
 .sidebar { border-right: 1px solid var(--border); padding: 1rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
 
@@ -43,6 +40,7 @@ textarea:focus { border-color: var(--accent); }
 .row2 { display: flex; align-items: center; justify-content: space-between; gap: 0.4rem; }
 .cl { font-size: 0.72rem; color: var(--muted); }
 
+/* Editable value badge — click to type */
 .cv {
   font-size: 0.72rem; color: var(--accent); cursor: pointer;
   border: 1px solid transparent; border-radius: 3px; padding: 1px 4px;
@@ -76,31 +74,31 @@ select { background: var(--surface); border: 1px solid var(--border); border-rad
 .btn:hover { border-color: var(--accent); color: var(--accent); }
 .btn.animating { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.08); }
 
-/* ── Modals ─────────────────────────────────────────────── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+/* Export format modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: flex; align-items: center; justify-content: center; }
 .modal-overlay.hidden { display: none; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; width: 340px; display: flex; flex-direction: column; gap: 1rem; max-height: 90vh; overflow-y: auto; }
-.modal-title { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; width: 320px; display: flex; flex-direction: column; gap: 1rem; }
+.modal-title { font-size: 0.85rem; font-weight: 700; color: var(--text); }
 .modal-sub { font-size: 0.68rem; color: var(--muted); margin-top: -0.5rem; }
 .format-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-.fmt-btn { padding: 0.9rem 0.5rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 0.72rem; font-weight: 700; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.15s; }
+.fmt-btn { padding: 0.8rem 0.5rem; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 0.72rem; font-weight: 700; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.15s; }
 .fmt-btn:hover { border-color: var(--accent); color: var(--accent); }
-.fmt-btn .fmt-ext { font-size: 1.2rem; display: block; margin-bottom: 0.25rem; }
-.fmt-btn .fmt-desc { font-size: 0.6rem; color: var(--muted); font-weight: 400; }
-.modal-cancel { padding: 0.6rem; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--mono); font-size: 0.68rem; border-radius: 6px; cursor: pointer; width: 100%; }
-.modal-cancel:hover { color: var(--text); }
+.fmt-btn .fmt-ext { font-size: 1.1rem; display: block; margin-bottom: 0.2rem; }
+.fmt-btn .fmt-desc { font-size: 0.58rem; color: var(--muted); font-weight: 400; }
+.fmt-btn:hover .fmt-desc { color: var(--accent); opacity: 0.7; }
+.modal-cancel { padding: 0.5rem; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--mono); font-size: 0.65rem; border-radius: 5px; cursor: pointer; width: 100%; }
+.modal-cancel:hover { border-color: var(--border); color: var(--text); }
 .modal-progress { font-size: 0.68rem; color: var(--accent); text-align: center; display: none; }
-/* animate settings modal (mobile top-bar button) */
-.anim-modal-body { display: flex; flex-direction: column; gap: 0.75rem; }
 
 .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
 .model-controls { display: none; flex-direction: column; gap: 0.7rem; }
 .model-controls.show { display: flex; }
 
-/* ── Canvas area ────────────────────────────────────────── */
+/* Canvas area */
 .canvas-area { display: flex; flex-direction: column; padding: 0.75rem; gap: 0.5rem; position: relative; overflow: hidden; min-height: 0; }
 .viewport { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; position: relative; }
 
+/* Output canvas — sits on top of the optional bg image */
 .out-wrap { position: relative; display: flex; align-items: center; justify-content: center; max-width: 100%; max-height: 100%; }
 #bgImg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; border-radius: 4px; display: none; }
 #bgImg.show { display: block; }
@@ -113,7 +111,7 @@ select { background: var(--surface); border: 1px solid var(--border); border-rad
 .ph-art { font-size: 0.44rem; color: var(--border); line-height: 1.1; white-space: pre; text-align: center; }
 .ph-txt { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
 
-.sb { position: absolute; top: 0.75rem; right: 0.75rem; font-size: 0.62rem; color: var(--muted); background: #111; border: 1px solid var(--border); border-radius: 3px; padding: 3px 8px; z-index: 20; }
+.sb { position: absolute; top: 1.1rem; right: 1.1rem; font-size: 0.65rem; color: var(--muted); background: #111; border: 1px solid var(--border); border-radius: 3px; padding: 3px 8px; z-index: 20; }
 .sb.live { color: var(--accent); border-color: var(--accent); }
 
 .vctl { display: none; align-items: center; gap: 0.5rem; flex-shrink: 0; }
@@ -127,326 +125,14 @@ select { background: var(--surface); border: 1px solid var(--border); border-rad
 #hc { display: none; }
 #hv { display: none; }
 #threeCanvas { display: none; }
-
-/* ══════════════════════════════════════════════════════════
-   MOBILE — shown only on small screens
-══════════════════════════════════════════════════════════ */
-/* Mobile top bar */
-.m-topbar { display: none; }
-/* Mobile bottom nav */
-.m-bottomnav { display: none; }
-/* Mobile panel drawer */
-.m-panel { display: none; }
-
-@media (max-width: 768px) {
-  /* hide desktop chrome */
-  header { display: none; }
-  .sidebar { display: none; }
-  .layout { grid-template-columns: 1fr; }
-
-  html, body { height: 100dvh; overflow: hidden; }
-
-  body { flex-direction: column; }
-
-  /* ── top bar ── */
-  .m-topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 1rem; height: var(--top-h); flex-shrink: 0;
-    border-bottom: 1px solid var(--border); background: var(--surface);
-    z-index: 100;
-  }
-  .m-logo { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.14em; font-weight: 700; }
-  .m-topbar-actions { display: flex; align-items: center; gap: 0.5rem; }
-  .m-topbtn {
-    display: flex; align-items: center; gap: 0.4rem;
-    padding: 0.42rem 0.9rem; background: transparent;
-    border: 1px solid var(--border); color: var(--text);
-    font-family: var(--mono); font-size: 0.7rem; font-weight: 700;
-    border-radius: 6px; cursor: pointer; text-transform: uppercase;
-    letter-spacing: 0.05em; white-space: nowrap;
-  }
-  .m-topbtn.animating { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.08); }
-  .m-topbtn-save { background: var(--accent); color: #000; border-color: var(--accent); }
-
-  /* ── main canvas fills remaining space ── */
-  .canvas-area {
-    flex: 1; padding: 0.5rem;
-    padding-bottom: calc(var(--nav-h) + 0.5rem);
-  }
-
-  /* ── bottom nav ── */
-  .m-bottomnav {
-    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
-    height: var(--nav-h); background: var(--surface);
-    border-top: 1px solid var(--border); z-index: 200;
-  }
-  .m-navbtn {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 4px; background: transparent; border: none;
-    color: var(--muted); font-family: var(--mono); font-size: 0.48rem;
-    letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
-    transition: color 0.15s; border-top: 2px solid transparent;
-    padding: 0; position: relative;
-  }
-  .m-navbtn.active { color: var(--accent); border-top-color: var(--accent); }
-  .m-navbtn svg { width: 20px; height: 20px; }
-
-  /* ── panel drawer (slides up from bottom) ── */
-  .m-panel {
-    display: flex; flex-direction: column;
-    position: fixed; bottom: var(--nav-h); left: 0; right: 0;
-    max-height: 65vh; background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-radius: 16px 16px 0 0;
-    transform: translateY(100%);
-    transition: transform 0.28s cubic-bezier(0.32,0,0.24,1);
-    z-index: 150; overflow: hidden;
-  }
-  .m-panel.open { transform: translateY(0); }
-  .m-panel-handle {
-    flex-shrink: 0; padding: 0.75rem 1rem 0.5rem;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-  }
-  .m-panel-title { font-size: 0.72rem; font-weight: 700; color: var(--text); letter-spacing: 0.05em; }
-  .m-panel-close {
-    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
-    background: transparent; border: none; color: var(--muted); font-size: 1rem; cursor: pointer;
-  }
-  .m-panel-body { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; }
-
-  /* panel sub-sections (tabs within effect panel) */
-  .m-effect-tabs {
-    display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.5rem;
-  }
-  .m-efftab {
-    padding: 0.3rem 0.65rem; background: transparent; border: 1px solid var(--border);
-    color: var(--muted); font-family: var(--mono); font-size: 0.62rem;
-    border-radius: 20px; cursor: pointer; white-space: nowrap;
-  }
-  .m-efftab.on { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.08); }
-  .m-effsection { display: none; flex-direction: column; gap: 0.85rem; }
-  .m-effsection.on { display: flex; }
-
-  /* bottom-sheet on mobile */
-  .modal-overlay { align-items: flex-end; }
-  .modal { border-radius: 16px 16px 0 0; width: 100%; max-width: 100%; }
-
-  /* larger touch targets */
-  input[type=range] { height: 4px; margin: 0.5rem 0; }
-  input[type=range]::-webkit-slider-thumb { width: 20px; height: 20px; }
-  textarea { font-size: 0.85rem; }
-  select { font-size: 0.82rem; padding: 0.55rem 0.6rem; }
-  .tabs .tab { padding: 0.5rem 0.3rem; font-size: 0.72rem; }
-  .sw { border-radius: 6px; }
-  .swatches { gap: 8px; }
-  input[type=color] { width: 28px; height: 28px; }
-  .cv { font-size: 0.82rem; min-width: 3.2rem; }
-  .cl { font-size: 0.8rem; }
-  .lbl { font-size: 0.7rem; }
-}
 </style>
 </head>
 <body>
-
-<!-- ── MOBILE: top bar ─────────────────────────────────── -->
-<div class="m-topbar">
-  <span class="m-logo">PRETEXT ASCII</span>
-  <div class="m-topbar-actions">
-    <button class="m-topbtn" id="mAnimBtn" onclick="mobileToggleAnimate()">▶ Animate</button>
-    <button class="m-topbtn m-topbtn-save" onclick="doDownload()">⬇ Save</button>
-  </div>
-</div>
-
-<!-- ── DESKTOP: header ─────────────────────────────────── -->
 <header>
   <span class="logo">PRETEXT</span>
   <span class="title">ASCII Generator</span>
   <span class="badge">LIVE</span>
 </header>
-
-<!-- ── MOBILE: panels (drawn here, shown above bottom nav) -->
-<!-- Source panel -->
-<div class="m-panel" id="mPanelSource">
-  <div class="m-panel-handle">
-    <span class="m-panel-title">SOURCE</span>
-    <button class="m-panel-close" onclick="closePanel()">✕</button>
-  </div>
-  <div class="m-panel-body">
-    <label class="dz" id="dz2">
-      <input type="file" id="fi2" accept="image/*,video/*,.svg,.gltf,.glb,.obj,.stl">
-      <div class="dz-ico">⬆</div>
-      <div class="dz-txt"><strong>Tap to upload</strong>PNG · JPG · SVG · MP4 · WEBM · GLB · OBJ · STL</div>
-      <div class="dz-name" id="fname2"></div>
-    </label>
-    <div class="vctl" id="vc2">
-      <button class="pbtn" id="pb2" onclick="togglePlay()">▶</button>
-      <input type="range" class="scrub" id="sc2" min="0" max="1000" value="0" step="1">
-      <span class="tc" id="tc2">0:00 / 0:00</span>
-    </div>
-  </div>
-</div>
-
-<!-- Effect panel -->
-<div class="m-panel" id="mPanelEffect">
-  <div class="m-panel-handle">
-    <span class="m-panel-title">EFFECT</span>
-    <button class="m-panel-close" onclick="closePanel()">✕</button>
-  </div>
-  <div class="m-panel-body">
-    <!-- sub-tabs -->
-    <div class="m-effect-tabs">
-      <button class="m-efftab on" onclick="switchEffectTab('chars',this)">Characters</button>
-      <button class="m-efftab" onclick="switchEffectTab('presets',this)">Presets</button>
-      <button class="m-efftab" onclick="switchEffectTab('font',this)">Font</button>
-      <button class="m-efftab" onclick="switchEffectTab('fontsize',this)">Size</button>
-      <button class="m-efftab" onclick="switchEffectTab('lineheight',this)">Line</button>
-    </div>
-    <!-- Characters -->
-    <div class="m-effsection on" id="meff-chars">
-      <div class="lbl">Characters</div>
-      <textarea id="mChars" oninput="syncMobileChars()">Made by Matthew Kwong- matthewkwong.com</textarea>
-    </div>
-    <!-- Presets -->
-    <div class="m-effsection" id="meff-presets">
-      <div class="lbl">Presets</div>
-      <div class="tabs" id="mPtabs">
-        <button class="tab" onclick="setPreset('minimal',this)">minimal</button>
-        <button class="tab" onclick="setPreset('blocks',this)">blocks</button>
-        <button class="tab on" onclick="setPreset('custom',this)">custom</button>
-      </div>
-    </div>
-    <!-- Font family -->
-    <div class="m-effsection" id="meff-font">
-      <div class="lbl">Font</div>
-      <select id="mFont" onchange="S.font=this.value;S.charData=null;redraw();">
-        <option value="Georgia">Georgia (proportional)</option>
-        <option value="'Times New Roman'">Times New Roman</option>
-        <option value="Arial">Arial</option>
-        <option value="'Space Mono'">Space Mono (mono)</option>
-        <option value="monospace">System Mono</option>
-      </select>
-    </div>
-    <!-- Font size -->
-    <div class="m-effsection" id="meff-fontsize">
-      <div class="row2"><span class="cl">Font size</span><input class="cv" id="mFsVal" type="number" value="14" min="4" max="60" step="1"></div>
-      <input type="range" id="mFs" min="4" max="60" value="14" step="1">
-    </div>
-    <!-- Line height -->
-    <div class="m-effsection" id="meff-lineheight">
-      <div class="row2"><span class="cl">Line height</span><input class="cv" id="mLhVal" type="number" value="1.1" min="0.5" max="3" step="0.05"></div>
-      <input type="range" id="mLh" min="0.5" max="3" value="1.1" step="0.05">
-    </div>
-
-  </div>
-</div>
-
-<!-- Color panel -->
-<div class="m-panel" id="mPanelColor">
-  <div class="m-panel-handle">
-    <span class="m-panel-title">COLOR</span>
-    <button class="m-panel-close" onclick="closePanel()">✕</button>
-  </div>
-  <div class="m-panel-body">
-    <div class="swatches" id="mSwatches">
-      <div class="sw on" style="background:#e8ff47" data-c="#e8ff47"></div>
-      <div class="sw" style="background:#ffffff" data-c="#ffffff"></div>
-      <div class="sw" style="background:#ff4757" data-c="#ff4757"></div>
-      <div class="sw" style="background:#2ed573" data-c="#2ed573"></div>
-      <div class="sw" style="background:#1e90ff" data-c="#1e90ff"></div>
-      <div class="sw" style="background:#ff6b81" data-c="#ff6b81"></div>
-      <div class="sw" style="background:#ffa502" data-c="#ffa502"></div>
-      <div class="sw" style="background:#a29bfe" data-c="#a29bfe"></div>
-      <div class="sw" style="background:#fd79a8" data-c="#fd79a8"></div>
-      <div class="sw" style="background:#00cec9" data-c="#00cec9"></div>
-      <div class="sw" style="background:#55efc4" data-c="#55efc4"></div>
-      <div class="sw" style="background:#fdcb6e" data-c="#fdcb6e"></div>
-    </div>
-    <div class="crow">
-      <input type="color" id="mCp" value="#e8ff47" oninput="S.color=this.value;document.getElementById('cp').value=this.value;document.getElementById('chex').textContent=this.value;document.querySelectorAll('.sw').forEach(s=>s.classList.remove('on'));redraw();">
-      <span class="cl">Text color</span>
-    </div>
-    <div class="crow">
-      <input type="color" id="mBgp" value="#000000" oninput="S.bg=this.value;document.getElementById('bgp').value=this.value;redraw();">
-      <span class="cl">Background</span>
-      <label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted);cursor:pointer">
-        <input type="checkbox" id="mTranspBg" style="width:14px;height:14px;cursor:pointer;accent-color:var(--accent)" onchange="document.getElementById('transpBg').checked=this.checked;document.getElementById('transpBg').dispatchEvent(new Event('change'))"> transp.
-      </label>
-    </div>
-    <div class="crow">
-      <span class="cl">Show original image</span>
-      <label style="margin-left:auto;display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted);cursor:pointer">
-        <input type="checkbox" id="mShowBg" style="width:14px;height:14px;cursor:pointer;accent-color:var(--accent)" onchange="document.getElementById('showBg').checked=this.checked;document.getElementById('showBg').dispatchEvent(new Event('change'))">
-      </label>
-    </div>
-    <div>
-      <div class="row2"><span class="cl">BG opacity</span><input class="cv" id="mBgOpVal" type="number" value="0.35" min="0" max="1" step="0.05"></div>
-      <input type="range" id="mBgOp" min="0" max="1" value="0.35" step="0.05">
-    </div>
-  </div>
-</div>
-
-<!-- Settings panel -->
-<div class="m-panel" id="mPanelSettings">
-  <div class="m-panel-handle">
-    <span class="m-panel-title">SETTINGS</span>
-    <button class="m-panel-close" onclick="closePanel()">✕</button>
-  </div>
-  <div class="m-panel-body">
-    <div>
-      <div class="row2"><span class="cl">Contrast</span><input class="cv" id="mCoVal" type="number" value="1.4" min="0.1" max="6" step="0.1"></div>
-      <input type="range" id="mCo" min="0.1" max="6" value="1.4" step="0.1">
-    </div>
-    <div>
-      <div class="row2"><span class="cl">Brightness</span><input class="cv" id="mBrVal" type="number" value="1.0" min="0.1" max="5" step="0.1"></div>
-      <input type="range" id="mBr" min="0.1" max="5" value="1.0" step="0.1">
-    </div>
-    <div>
-      <div class="lbl" style="margin-bottom:0.25rem">Invert</div>
-      <div class="tabs">
-        <button class="tab on" id="mInvOff" onclick="setInvert(false);this.classList.add('on');document.getElementById('mInvOn').classList.remove('on')">off</button>
-        <button class="tab" id="mInvOn" onclick="setInvert(true);this.classList.add('on');document.getElementById('mInvOff').classList.remove('on')">on</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Animate settings modal (mobile top bar) -->
-<div class="modal-overlay hidden" id="mAnimModal" onclick="if(event.target===this)document.getElementById('mAnimModal').classList.add('hidden')">
-  <div class="modal">
-    <div class="modal-title">Animate</div>
-    <div class="anim-modal-body">
-      <div class="lbl">Mode</div>
-      <div class="tabs">
-        <button class="tab on" id="mModeRandomize" onclick="setAnimMode('randomize',document.getElementById('modeRandomize'))">randomize</button>
-        <button class="tab" id="mModeScroll" onclick="setAnimMode('scroll',document.getElementById('modeScroll'))">scroll</button>
-      </div>
-      <div>
-        <div class="row2"><span class="cl">Speed (fps)</span><input class="cv" id="mAnimSpeedVal" type="number" value="8" min="1" max="30" step="1"></div>
-        <input type="range" id="mAnimSpeed" min="1" max="30" value="8" step="1">
-      </div>
-      <div id="mScrollDirRow" style="display:none">
-        <div class="lbl" style="margin-bottom:0.25rem">Scroll direction</div>
-        <div class="tabs">
-          <button class="tab on" onclick="setScrollDir(-1)">← left</button>
-          <button class="tab" onclick="setScrollDir(1)">right →</button>
-        </div>
-      </div>
-      <!-- Image loop — only shown when still image loaded -->
-      <div id="mImageLoopRow" style="display:none;flex-direction:column;gap:0.5rem">
-        <hr style="border:none;border-top:1px solid var(--border)">
-        <div class="lbl" style="margin-bottom:0">Image loop</div>
-        <div class="row2">
-          <span class="cl">Loop duration</span>
-          <input class="cv" id="mLoopDurVal" type="number" value="3" min="1" max="30" step="1">
-          <span class="cl" style="margin-left:-0.2rem">s</span>
-        </div>
-        <input type="range" id="mLoopDur" min="1" max="30" value="3" step="1">
-      </div>
-    </div>
-    <button class="modal-cancel" onclick="document.getElementById('mAnimModal').classList.add('hidden')">Done</button>
-  </div>
-</div>
 
 <div class="layout">
 <aside class="sidebar">
@@ -494,6 +180,12 @@ select { background: var(--surface); border: 1px solid var(--border); border-rad
         <input class="cv" id="lhVal" type="number" value="1.1" min="0.5" max="3" step="0.05">
       </div>
       <input type="range" id="lh" min="0.5" max="3" value="1.1" step="0.05">
+    </div>
+    <div style="margin-top:0.32rem">
+      <div class="row2"><span class="cl">Text rotation</span>
+        <input class="cv" id="rotVal" type="number" value="0" min="-180" max="180" step="1">
+      </div>
+      <input type="range" id="rot" min="-180" max="180" value="0" step="1">
     </div>
   </div>
 
@@ -611,17 +303,6 @@ select { background: var(--surface); border: 1px solid var(--border); border-rad
         <button class="tab"    id="scrollRight" onclick="setScrollDir(1)">right →</button>
       </div>
     </div>
-    <!-- Image loop — shown only when a still image is loaded -->
-    <div id="imageLoopRow" style="display:none;flex-direction:column;gap:0.5rem">
-      <hr style="border:none;border-top:1px solid var(--border)">
-      <div class="lbl" style="margin-bottom:0">Image loop</div>
-      <div class="row2">
-        <span class="cl">Loop duration</span>
-        <input class="cv" id="loopDurVal" type="number" value="3" min="1" max="30" step="1">
-        <span class="cl" style="margin-left:-0.2rem">s</span>
-      </div>
-      <input type="range" id="loopDur" min="1" max="30" value="3" step="1">
-    </div>
   </div>
 
   <div class="btns">
@@ -658,39 +339,8 @@ select { background: var(--surface); border: 1px solid var(--border); border-rad
 </main>
 </div>
 
-<!-- ── MOBILE: bottom nav ───────────────────────────────── -->
-<nav class="m-bottomnav">
-  <button class="m-navbtn" id="mNavSource" onclick="openPanel('Source')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 16.5V19a1 1 0 001 1h14a1 1 0 001-1v-2.5"/><path d="M12 3v13M8.5 9.5L12 6l3.5 3.5"/>
-    </svg>
-    source
-  </button>
-  <button class="m-navbtn" id="mNavEffect" onclick="openPanel('Effect')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
-      <circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/>
-      <circle cx="15" cy="14" r="2" fill="currentColor" stroke="none"/>
-    </svg>
-    effect
-  </button>
-  <button class="m-navbtn" id="mNavColor" onclick="openPanel('Color')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/>
-      <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10a2 2 0 002-2v-1a2 2 0 012-2h1a2 2 0 002-2 10 10 0 00-7-9.516"/>
-    </svg>
-    color
-  </button>
-  <button class="m-navbtn" id="mNavSettings" onclick="openPanel('Settings')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-    </svg>
-    settings
-  </button>
-</nav>
-
 <!-- Export format modal -->
-<div class="modal-overlay hidden" id="exportModal" onclick="if(event.target===this)closeExportModal()">
+<div class="modal-overlay hidden" id="exportModal">
   <div class="modal">
     <div class="modal-title">Export format</div>
     <div class="modal-sub" id="exportModalSub">Choose how to save your ASCII art</div>
@@ -746,14 +396,13 @@ const S = {
   srcW: 0, srcH: 0,                          // original source dimensions
   color: '#e8ff47', bg: '#000000',
   transparent: false, showBg: false, bgOpacity: 0.35,
-  fontSize: 14, lineHeight: 1.1, font: 'Georgia',
+  fontSize: 14, lineHeight: 1.1, font: 'Georgia', textRotation: 0,
   contrast: 1.4, bright: 1.0, invert: false,
   charData: null, customText: 'Made by Matthew Kwong- matthewkwong.com',
   raf: null, px: null, sW: 0, sH: 0,
   threeRenderer: null, threeScene: null, threeCamera: null, threeModel: null,
   modelRotating: true, modelSpeed: 1.0, modelDir: 1, modelAngle: 0,
-  animating: false, animRaf: null, ditherSeed: 0, animSpeed: 8, animMode: "randomize", scrollOffset: 0, loopDuration: 3,
-  rawImgUrl: null, rawImgEl: null,  // unedited original for "show original" overlay
+  animating: false, animRaf: null, ditherSeed: 0, animSpeed: 8, animMode: "randomize", scrollOffset: 0,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -809,6 +458,8 @@ function drawFrameToCanvas(src, targetCtx, cw, ch) {
   const str = getStr();
   const n   = str.length;
   const d   = S.charData;
+  const rot = S.textRotation * Math.PI / 180;
+
   // Background
   if (S.transparent) {
     targetCtx.clearRect(0, 0, cw, ch);
@@ -816,23 +467,13 @@ function drawFrameToCanvas(src, targetCtx, cw, ch) {
     targetCtx.fillStyle = S.bg;
     targetCtx.fillRect(0, 0, cw, ch);
   }
-  // Show original: draw the unfiltered source directly onto the canvas before ASCII.
-  // For images: use S.rawImgEl (no contrast/brightness applied).
-  // For video:  draw the current hv frame directly — it's already the raw frame.
-  // For 3D:     draw the Three.js canvas directly.
-  if (S.showBg) {
-    let rawSrc = null;
-    if (S.isVideo && hv.readyState >= 2)          rawSrc = hv;
-    else if (S.is3D && S.threeRenderer)           rawSrc = threeCanvas;
-    else if (S.rawImgEl && S.rawImgEl.complete)   rawSrc = S.rawImgEl;
-    if (rawSrc) {
-      targetCtx.save();
-      targetCtx.globalAlpha = S.bgOpacity;
-      targetCtx.drawImage(rawSrc, 0, 0, cw, ch);
-      targetCtx.restore();
-    }
-  }
 
+  targetCtx.save();
+  if (rot !== 0) {
+    targetCtx.translate(cw/2, ch/2);
+    targetCtx.rotate(rot);
+    targetCtx.translate(-cw/2, -ch/2);
+  }
   targetCtx.font = `${fs}px ${S.font}`;
   targetCtx.textBaseline = 'top';
   targetCtx.fillStyle = S.color;
@@ -843,6 +484,8 @@ function drawFrameToCanvas(src, targetCtx, cw, ch) {
   for (let i = 0; i < d.length; i++) { widthMap[d[i].ch] = d[i].w; fallbackW = d[i].w; }
 
   const seed = S.ditherSeed;
+
+  // Fast integer hash — unique per cell per frame, no Math.imul dependency
   function cellHash(ri, ci) {
     let h = ((ri * 1619) ^ (ci * 31337) ^ (seed * 7919)) >>> 0;
     h = (h ^ (h >>> 16)) >>> 0;
@@ -857,14 +500,20 @@ function drawFrameToCanvas(src, targetCtx, cw, ch) {
     let x = 0, colIdx = 0;
     while (x < cw) {
       const baseIdx = (rowIdx * 997 + colIdx) % n;
+
       let ci;
       if (!S.animating) {
+        // Static: fixed grid position
         ci = baseIdx;
       } else if (S.animMode === 'randomize') {
+        // Randomize: each cell picks a fully random char from the string each frame
         ci = cellHash(rowIdx, colIdx) % n;
       } else {
+        // Scroll: the string slides left or right across the grid each frame
+        // scrollOffset advances each frame, making the phrase flow across the image
         ci = ((rowIdx * 997 + colIdx) + S.scrollOffset) % n;
       }
+
       const glyph = str[Math.abs(ci) % n];
       const nx = x / cw;
       const b  = luma(nx, ny);
@@ -878,6 +527,7 @@ function drawFrameToCanvas(src, targetCtx, cw, ch) {
     }
     rowIdx++;
   }
+  targetCtx.restore();
   targetCtx.globalAlpha = 1;
 }
 
@@ -1071,7 +721,6 @@ function loadFile(file) {
   const ext  = file.name.split('.').pop().toLowerCase();
   const type = file.type;
   S.imgEl=null; S.isVideo=false; S.isSVG=false; S.is3D=false; S.ready=false; S.px=null; S.srcW=0; S.srcH=0;
-  S.rawImgEl=null;
   document.getElementById('fname').textContent=file.name;
   ph.classList.add('gone');
   vc.className='vctl';
@@ -1084,7 +733,7 @@ function loadFile(file) {
   } else if (type.startsWith('video/')) {
     S.isVideo=true; vc.className='vctl show';
     if (hv._url) URL.revokeObjectURL(hv._url);
-    hv._url=URL.createObjectURL(file); hv.src=hv._url; hv.loop=true; hv.load();
+    hv._url=URL.createObjectURL(file); hv.src=hv._url; hv.loop=false; hv.load();
     hv.addEventListener('loadedmetadata',()=>{ sc.value=0; tc.textContent='0:00 / '+fmt(hv.duration); },{once:true});
     hv.addEventListener('canplay',function(){
       if (S.ready) return; S.ready=true; pb.textContent='⏸';
@@ -1096,20 +745,12 @@ function loadFile(file) {
   } else {
     // image / SVG
     S.isSVG = ext==='svg';
-    // Revoke previous raw URLs to avoid memory leak
-    if (S.rawImgUrl) URL.revokeObjectURL(S.rawImgUrl);
-    S.rawImgUrl = URL.createObjectURL(file);
-    // Pre-load the raw image element (no filters — used for "show original" compositing)
-    const rawImg = new Image();
-    rawImg.onload = () => { S.rawImgEl = rawImg; };
-    rawImg.src = S.rawImgUrl;
-    // Hide the old bgImg overlay — we now composite via canvas
-    bgImg.src = ''; bgImg.className = '';
-
     const img = new Image();
     img.onload = () => {
       S.imgEl=img; S.ready=true;
       S.srcW=img.naturalWidth; S.srcH=img.naturalHeight;
+      // Set bg image source
+      bgImg.src = URL.createObjectURL(file);
       buildCharData(); drawFrame(img); setSB('ready');
     };
     img.onerror=()=>setSB('load error');
@@ -1148,12 +789,12 @@ function linkSlider(rangeId, inputId, stateKey, rebuild, postChange) {
 
 linkSlider('fs',  'fsVal',  'fontSize',    true,  null);
 linkSlider('lh',  'lhVal',  'lineHeight',  false, null);
+linkSlider('rot', 'rotVal', 'textRotation',false, null);
 linkSlider('co',  'coVal',  'contrast',    false, null);
 linkSlider('br',  'brVal',  'bright',      false, null);
 linkSlider('rsp', 'rspVal', 'modelSpeed',  false, null);
-linkSlider('bgOp','bgOpVal','bgOpacity',   false, null);
+linkSlider('bgOp','bgOpVal','bgOpacity',   false, v=>{ bgImg.style.opacity=v; });
 linkSlider('animSpeed','animSpeedVal','animSpeed', false, null);
-linkSlider('loopDur','loopDurVal','loopDuration', false, null);
 
 // ─── Other controls ───────────────────────────────────────────────────────────
 document.getElementById('transpBg').addEventListener('change', function() {
@@ -1164,9 +805,11 @@ document.getElementById('transpBg').addEventListener('change', function() {
 });
 
 document.getElementById('showBg').addEventListener('change', function() {
-  S.showBg = this.checked;
-  // Original image is now composited directly into the canvas in drawFrameToCanvas —
-  // no need to manipulate bgImg visibility or canvas opacity.
+  S.showBg=this.checked;
+  bgImg.className=this.checked&&bgImg.src?'show':'';
+  bgImg.style.opacity=S.bgOpacity;
+  // Make ASCII canvas semi-transparent when bg shown so image shows through
+  out.style.opacity=this.checked?'0.85':'1';
   redraw();
 });
 
@@ -1222,10 +865,19 @@ function exportFullRes() {
   expCanvas.height = S.srcH;
   const expCtx = expCanvas.getContext('2d');
 
-  // The preview canvas already composites the original image + ASCII correctly.
-  // Scale it up pixel-for-pixel to the source dimensions.
+  // Optional: composite original image under the ASCII layer
+  if (S.showBg && S.imgEl) {
+    expCtx.globalAlpha = S.bgOpacity;
+    expCtx.drawImage(S.imgEl, 0, 0, S.srcW, S.srcH);
+    expCtx.globalAlpha = 1;
+  }
+
+  // Scale up from the live preview canvas — same render, just bigger.
+  // imageSmoothingEnabled=false keeps text crisp (no blurring on upscale).
   expCtx.imageSmoothingEnabled = false;
+  expCtx.globalAlpha = S.showBg ? 0.85 : 1;
   expCtx.drawImage(out, 0, 0, out.width, out.height, 0, 0, S.srcW, S.srcH);
+  expCtx.globalAlpha = 1;
 
   return expCanvas;
 }
@@ -1233,18 +885,12 @@ function exportFullRes() {
 // ─── Animate toggle ──────────────────────────────────────────────────────────
 window.toggleAnimate = function() {
   S.animating = !S.animating;
-  const btn  = document.getElementById('animBtn');
+  const btn = document.getElementById('animBtn');
   const ctrl = document.getElementById('animControls');
   if (S.animating) {
     btn.textContent = '■ Stop';
     btn.classList.add('animating');
     ctrl.style.display = 'flex';
-    // Show image loop row only for still images (not video or 3D)
-    const loopRow  = document.getElementById('imageLoopRow');
-    const mLoopRow = document.getElementById('mImageLoopRow');
-    const showLoop = S.ready && !S.isVideo && !S.is3D;
-    if (loopRow)  loopRow.style.display  = showLoop ? 'flex' : 'none';
-    if (mLoopRow) mLoopRow.style.display = showLoop ? 'flex' : 'none';
     runAnimateLoop();
   } else {
     btn.textContent = '▶ Animate';
@@ -1316,7 +962,7 @@ window.doExport = async function(format) {
 
   if (format === 'gif') {
     prog.textContent = 'Building GIF frames…';
-    const fps = 15, duration = S.loopDuration || 3;
+    const fps = 15, duration = 2; // 2 second loop
     const totalFrames = fps * duration;
     const frameDelay = Math.round(100 / fps); // GIF delay in centiseconds
 
@@ -1365,10 +1011,9 @@ window.doExport = async function(format) {
     const mimeType = 'video/webm';
 
     if (S.isVideo && !S.animating) {
-      // Record the full video clip duration — disable looping so it plays once cleanly
+      // Record the full video clip duration
       const clipDuration = hv.duration * 1000;
       if (!isFinite(clipDuration) || clipDuration < 100) { prog.textContent = 'invalid duration'; return; }
-      hv.loop = false;
       hv.currentTime = 0;
       hv.play();
       prog.textContent = 'Recording full clip (' + Math.round(clipDuration/1000) + 's)…';
@@ -1377,7 +1022,6 @@ window.doExport = async function(format) {
       const chunks = [];
       rec.ondataavailable = e => chunks.push(e.data);
       rec.onstop = () => {
-        hv.loop = true;  // restore looping for playback
         hv.pause();
         const blob = new Blob(chunks, { type: mimeType });
         const a = document.createElement('a');
@@ -1391,7 +1035,7 @@ window.doExport = async function(format) {
       setTimeout(() => rec.stop(), clipDuration + 300);
     } else {
       // Animated dither loop — 3s
-      const loopDuration = (S.loopDuration || 3) * 1000;
+      const loopDuration = 3000;
       const wasAnimating = S.animating;
       if (!S.animating) { S.animating = true; runAnimateLoop(); }
       prog.textContent = 'Recording animated ' + format.toUpperCase() + '…';
@@ -1421,11 +1065,7 @@ window.doDownload = function() {
 
   // If animating, always show format picker
   if (S.animating) {
-    const loopSec = S.loopDuration || 3;
-    const subTxt = (S.ready && !S.isVideo && !S.is3D)
-      ? 'Animated image — ' + loopSec + 's loop'
-      : 'Animated — choose your export format';
-    document.getElementById('exportModalSub').textContent = subTxt;
+    document.getElementById('exportModalSub').textContent = 'Animated — choose your export format';
     document.getElementById('fmtGif').style.display = '';
     document.getElementById('fmtMp4').style.display = '';
     document.getElementById('exportModal').classList.remove('hidden');
@@ -1459,146 +1099,6 @@ window.doCopy=function(){
       .then(()=>setSB('copied!'))
       .catch(()=>setSB('clipboard unavailable'));
   });
-};
-
-// ── MOBILE UI ──────────────────────────────────────────────────────────────
-var currentPanel = null;
-
-function openPanel(name) {
-  closePanel();
-  var panel = document.getElementById('mPanel' + name);
-  if (!panel) return;
-  panel.classList.add('open');
-  currentPanel = name;
-  document.querySelectorAll('.m-navbtn').forEach(function(b){ b.classList.remove('active'); });
-  var nb = document.getElementById('mNav' + name);
-  if (nb) nb.classList.add('active');
-}
-
-function closePanel() {
-  document.querySelectorAll('.m-panel').forEach(function(p){ p.classList.remove('open'); });
-  document.querySelectorAll('.m-navbtn').forEach(function(b){ b.classList.remove('active'); });
-  currentPanel = null;
-}
-
-// Tap canvas to close panel
-document.getElementById('vp').addEventListener('click', function(e){
-  if (e.target===this||e.target.id==='out'||e.target.closest('.out-wrap')) closePanel();
-});
-
-window.switchEffectTab = function(tab, btn) {
-  document.querySelectorAll('.m-efftab').forEach(function(b){ b.classList.remove('on'); });
-  btn.classList.add('on');
-  document.querySelectorAll('.m-effsection').forEach(function(s){ s.classList.remove('on'); });
-  var sec = document.getElementById('meff-' + tab);
-  if (sec) sec.classList.add('on');
-};
-
-document.getElementById('fi2').addEventListener('change', function(e){ loadFile(e.target.files[0]); });
-
-window.syncMobileChars = function() {
-  var val = document.getElementById('mChars').value;
-  document.getElementById('chars').value = val;
-  S.charData = null; redraw();
-};
-
-document.getElementById('mSwatches').addEventListener('click', function(e){
-  var sw = e.target.closest('.sw');
-  if (!sw) return;
-  document.querySelectorAll('#mSwatches .sw, #swatches .sw').forEach(function(s){ s.classList.remove('on'); });
-  document.querySelectorAll('[data-c="'+sw.dataset.c+'"]').forEach(function(s){ s.classList.add('on'); });
-  S.color = sw.dataset.c;
-  document.getElementById('cp').value = sw.dataset.c;
-  document.getElementById('mCp').value = sw.dataset.c;
-  document.getElementById('chex').textContent = sw.dataset.c;
-  redraw();
-});
-
-window.mobileToggleAnimate = function() {
-  if (S.animating) {
-    toggleAnimate();
-    document.getElementById('mAnimBtn').textContent = '▶ Animate';
-    document.getElementById('mAnimBtn').classList.remove('animating');
-  } else {
-    // Show image loop row in modal only for still images
-    const mLoopRow = document.getElementById('mImageLoopRow');
-    if (mLoopRow) mLoopRow.style.display = (S.ready && !S.isVideo && !S.is3D) ? 'flex' : 'none';
-    document.getElementById('mAnimModal').classList.remove('hidden');
-  }
-};
-
-// "Done" in animate modal starts animation
-(function(){
-  var doneBtn = document.querySelector('#mAnimModal .modal-cancel');
-  if (doneBtn) doneBtn.addEventListener('click', function(){
-    document.getElementById('mAnimModal').classList.add('hidden');
-    if (!S.animating) {
-      toggleAnimate();
-      document.getElementById('mAnimBtn').textContent = '■ Stop';
-      document.getElementById('mAnimBtn').classList.add('animating');
-    }
-  });
-})();
-
-function linkMobileSlider(mRangeId, mValId, desktopRangeId, desktopValId, stateKey, rebuild) {
-  var mRange = document.getElementById(mRangeId);
-  var mInp   = document.getElementById(mValId);
-  if (!mRange || !mInp) return;
-  function apply(v) {
-    var val = parseFloat(v);
-    if (isNaN(val)) return;
-    val = Math.min(parseFloat(mRange.max), Math.max(parseFloat(mRange.min), val));
-    S[stateKey] = val;
-    mRange.value = val;
-    mInp.value = val;
-    var dr = document.getElementById(desktopRangeId);
-    if (dr) dr.value = val;
-    var dv = document.getElementById(desktopValId);
-    if (dv) dv.value = val;
-    if (rebuild) S.charData = null;
-    redraw();
-  }
-  mRange.addEventListener('input', function(e){ apply(e.target.value); });
-  mInp.addEventListener('change', function(e){ apply(e.target.value); });
-  mInp.addEventListener('keydown', function(e){ if(e.key==='Enter'){e.preventDefault();apply(mInp.value);} });
-}
-
-linkMobileSlider('mFs','mFsVal','fs','fsVal','fontSize',true);
-linkMobileSlider('mLh','mLhVal','lh','lhVal','lineHeight',false);
-linkMobileSlider('mCo','mCoVal','co','coVal','contrast',false);
-linkMobileSlider('mBr','mBrVal','br','brVal','bright',false);
-linkMobileSlider('mBgOp','mBgOpVal','bgOp','bgOpVal','bgOpacity',false);
-linkMobileSlider('mAnimSpeed','mAnimSpeedVal','animSpeed','animSpeedVal','animSpeed',false);
-linkMobileSlider('mLoopDur','mLoopDurVal','loopDur','loopDurVal','loopDuration',false);
-
-document.getElementById('sc2').addEventListener('input', function(){
-  if (!hv.duration) return;
-  hv.currentTime = (this.value/1000)*hv.duration;
-  document.getElementById('tc2').textContent = fmt(hv.currentTime)+' / '+fmt(hv.duration);
-  redraw();
-});
-
-// Patch updateTC to also update mobile scrubber/timecode
-var _origUpdateTC = updateTC;
-updateTC = function() {
-  _origUpdateTC();
-  if (!hv.duration) return;
-  var sc2 = document.getElementById('sc2');
-  var tc2 = document.getElementById('tc2');
-  if (sc2) sc2.value = Math.round((hv.currentTime/hv.duration)*1000);
-  if (tc2) tc2.textContent = fmt(hv.currentTime)+' / '+fmt(hv.duration);
-};
-
-// Patch loadFile to sync mobile UI
-var _origLoadFile = loadFile;
-loadFile = function(file) {
-  _origLoadFile(file);
-  if (!file) return;
-  var isVid = file.type.startsWith('video/');
-  var mvc = document.getElementById('vc2');
-  if (mvc) mvc.className = 'vctl'+(isVid?' show':'');
-  var mfn = document.getElementById('fname2');
-  if (mfn) setTimeout(function(){ mfn.textContent = file.name; }, 100);
 };
 </script>
 </body>
