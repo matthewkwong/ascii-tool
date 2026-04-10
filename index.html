@@ -703,14 +703,17 @@ select { background: var(--surface); border: 1px solid var(--border); border-rad
         <span class="fmt-ext">GIF</span>
         <span class="fmt-desc">animated, looping</span>
       </button>
-      <button class="fmt-btn" id="fmtMp4" onclick="doExport('mp4')">
-        <span class="fmt-ext">MP4</span>
-        <span class="fmt-desc">video, h264</span>
-      </button>
-      <button class="fmt-btn" onclick="doExport('webm')">
+      <button class="fmt-btn" id="fmtWebmVp8" onclick="doExport('webm-vp8')">
         <span class="fmt-ext">WEBM</span>
-        <span class="fmt-desc">video, vp9</span>
+        <span class="fmt-desc">video, vp8 · broad support</span>
       </button>
+      <button class="fmt-btn" id="fmtWebmVp9" onclick="doExport('webm-vp9')">
+        <span class="fmt-ext">WEBM HD</span>
+        <span class="fmt-desc">video, vp9 · better quality</span>
+      </button>
+    </div>
+    <div id="exportNote" style="display:none;font-size:0.58rem;color:var(--muted);line-height:1.5;padding-top:0.25rem;">
+      Need MP4? Open the downloaded .webm in <a href="https://www.handbrake.fr" target="_blank" style="color:var(--accent)">HandBrake</a> or upload to <a href="https://cloudconvert.com/webm-to-mp4" target="_blank" style="color:var(--accent)">cloudconvert.com</a> to convert free.
     </div>
     <div class="modal-progress" id="exportProgress"></div>
     <button class="modal-cancel" onclick="closeExportModal()">Cancel</button>
@@ -777,6 +780,9 @@ function buildCharData() {
 }
 
 // ─── Pixel buffer ────────────────────────────────────────────────────────────
+// We apply contrast, brightness and invert manually via pixel math instead of
+// hctx.filter — ctx.filter is unsupported on iOS Safari < 18 and silently does
+// nothing there, making those sliders appear broken on iPhone.
 function buildPixelBuffer(src) {
   const sw = src.videoWidth || src.naturalWidth || src.width || 640;
   const sh = src.videoHeight || src.naturalHeight || src.height || 480;
@@ -785,9 +791,42 @@ function buildPixelBuffer(src) {
   if (sw/sh > 1) { sW = MAX; sH = Math.round(MAX*sh/sw); }
   else           { sH = MAX; sW = Math.round(MAX*sw/sh); }
   hc.width = sW; hc.height = sH;
-  hctx.filter = `contrast(${S.contrast}) brightness(${S.bright})${S.invert?' invert(1)':''}`;
+
+  // Draw the source with no filter — raw pixels only
+  hctx.filter = 'none';
   hctx.drawImage(src, 0, 0, sW, sH);
-  S.px = hctx.getImageData(0, 0, sW, sH).data;
+  const id = hctx.getImageData(0, 0, sW, sH);
+  const d  = id.data;
+
+  // Apply brightness, contrast, and invert in pure JS so it works everywhere.
+  // Brightness: multiply each channel (>1 = brighter, <1 = darker).
+  // Contrast:   scale around midpoint 128 (CSS contrast() equivalent).
+  // Invert:     255 - channel.
+  const br  = S.bright;    // 0.1 – 5
+  const co  = S.contrast;  // 0.1 – 6
+  const inv = S.invert;
+
+  for (let i = 0; i < d.length; i += 4) {
+    let r = d[i], g = d[i+1], b = d[i+2];
+
+    // Brightness
+    r = r * br; g = g * br; b = b * br;
+
+    // Contrast: scale around 128
+    r = (r - 128) * co + 128;
+    g = (g - 128) * co + 128;
+    b = (b - 128) * co + 128;
+
+    // Invert
+    if (inv) { r = 255 - r; g = 255 - g; b = 255 - b; }
+
+    // Clamp to [0, 255]
+    d[i]   = r < 0 ? 0 : r > 255 ? 255 : r;
+    d[i+1] = g < 0 ? 0 : g > 255 ? 255 : g;
+    d[i+2] = b < 0 ? 0 : b > 255 ? 255 : b;
+  }
+
+  S.px = d;
   S.sW = sW; S.sH = sH;
 }
 
@@ -1296,6 +1335,8 @@ window.closeExportModal = function() {
   document.getElementById('exportModal').classList.add('hidden');
   document.getElementById('exportProgress').style.display = 'none';
   document.getElementById('exportProgress').textContent = '';
+  const noteEl = document.getElementById('exportNote');
+  if (noteEl) noteEl.style.display = 'none';
 };
 
 window.doExport = async function(format) {
@@ -1361,56 +1402,66 @@ window.doExport = async function(format) {
     return;
   }
 
-  if (format === 'mp4' || format === 'webm') {
-    const mimeType = 'video/webm';
+  if (format === 'webm-vp8' || format === 'webm-vp9') {
+    // Browsers only support WebM output from MediaRecorder — no native H.264/MP4.
+    // vp8 = broader device support, vp9 = better compression & quality.
+    const vp9Supported = MediaRecorder.isTypeSupported('video/webm;codecs=vp9');
+    const mimeType = (format === 'webm-vp9' && vp9Supported)
+      ? 'video/webm;codecs=vp9'
+      : 'video/webm;codecs=vp8';
+    const label   = format === 'webm-vp9' ? (vp9Supported ? 'VP9' : 'VP8 (VP9 unavailable)') : 'VP8';
+    const filename = format === 'webm-vp9' ? 'ascii-hd.webm' : 'ascii.webm';
+
+    // Show the MP4 conversion tip
+    const noteEl = document.getElementById('exportNote');
+    if (noteEl) noteEl.style.display = 'block';
+
+    function recordCanvas(durationMs, onDone) {
+      const stream = out.captureStream(30);
+      const rec = new MediaRecorder(stream, { mimeType });
+      const chunks = [];
+      rec.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+      rec.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        onDone(blob);
+      };
+      rec.start(100); // collect data every 100ms
+      setTimeout(() => rec.stop(), durationMs);
+    }
 
     if (S.isVideo && !S.animating) {
-      // Record the full video clip duration — disable looping so it plays once cleanly
+      // Full clip — disable loop so it plays once
       const clipDuration = hv.duration * 1000;
       if (!isFinite(clipDuration) || clipDuration < 100) { prog.textContent = 'invalid duration'; return; }
       hv.loop = false;
       hv.currentTime = 0;
       hv.play();
-      prog.textContent = 'Recording full clip (' + Math.round(clipDuration/1000) + 's)…';
-      const stream = out.captureStream(30);
-      const rec = new MediaRecorder(stream, { mimeType });
-      const chunks = [];
-      rec.ondataavailable = e => chunks.push(e.data);
-      rec.onstop = () => {
-        hv.loop = true;  // restore looping for playback
+      prog.textContent = 'Recording ' + label + ' — ' + Math.round(clipDuration/1000) + 's…';
+      recordCanvas(clipDuration + 400, (blob) => {
+        hv.loop = true;
         hv.pause();
-        const blob = new Blob(chunks, { type: mimeType });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = format === 'mp4' ? 'ascii-clip.mp4' : 'ascii-clip.webm';
+        a.download = filename;
         a.click();
-        setSB('saved ' + format.toUpperCase());
+        setSB('saved WEBM (' + label + ')');
         closeExportModal();
-      };
-      rec.start();
-      setTimeout(() => rec.stop(), clipDuration + 300);
+      });
     } else {
-      // Animated dither loop — 3s
+      // Animated dither loop
       const loopDuration = (S.loopDuration || 3) * 1000;
       const wasAnimating = S.animating;
       if (!S.animating) { S.animating = true; runAnimateLoop(); }
-      prog.textContent = 'Recording animated ' + format.toUpperCase() + '…';
-      const stream = out.captureStream(30);
-      const rec = new MediaRecorder(stream, { mimeType });
-      const chunks = [];
-      rec.ondataavailable = e => chunks.push(e.data);
-      rec.onstop = () => {
+      prog.textContent = 'Recording ' + label + ' — ' + Math.round(loopDuration/1000) + 's…';
+      recordCanvas(loopDuration, (blob) => {
         if (!wasAnimating) { S.animating = false; if (S.animRaf) { clearTimeout(S.animRaf); S.animRaf = null; } redraw(); }
-        const blob = new Blob(chunks, { type: mimeType });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = format === 'mp4' ? 'ascii-animated.mp4' : 'ascii-animated.webm';
+        a.download = filename;
         a.click();
-        setSB('saved ' + format.toUpperCase());
+        setSB('saved WEBM (' + label + ')');
         closeExportModal();
-      };
-      rec.start();
-      setTimeout(() => rec.stop(), loopDuration);
+      });
     }
     return;
   }
@@ -1427,7 +1478,10 @@ window.doDownload = function() {
       : 'Animated — choose your export format';
     document.getElementById('exportModalSub').textContent = subTxt;
     document.getElementById('fmtGif').style.display = '';
-    document.getElementById('fmtMp4').style.display = '';
+    document.getElementById('fmtWebmVp8').style.display = '';
+    document.getElementById('fmtWebmVp9').style.display = '';
+    const noteEl = document.getElementById('exportNote');
+    if (noteEl) noteEl.style.display = 'none';
     document.getElementById('exportModal').classList.remove('hidden');
     return;
   }
@@ -1436,7 +1490,10 @@ window.doDownload = function() {
   if (S.isVideo) {
     document.getElementById('exportModalSub').textContent = 'Save the full video clip';
     document.getElementById('fmtGif').style.display = 'none';
-    document.getElementById('fmtMp4').style.display = '';
+    document.getElementById('fmtWebmVp8').style.display = '';
+    document.getElementById('fmtWebmVp9').style.display = '';
+    const noteEl2 = document.getElementById('exportNote');
+    if (noteEl2) noteEl2.style.display = 'none';
     document.getElementById('exportModal').classList.remove('hidden');
     return;
   }
